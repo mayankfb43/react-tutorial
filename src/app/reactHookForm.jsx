@@ -9,10 +9,12 @@ function DynamicForm() {
     control,
     handleSubmit,
     watch,
+    trigger,
+    setValue, 
     formState: { errors },
   } = useForm({
     defaultValues: {
-      items: [{ name: "", quantity: "" }],
+      items: [],
     },
     resolver: yupResolver(
       yup.object().shape({
@@ -75,9 +77,9 @@ function DynamicForm() {
             placeholder="Item name"
             className="border p-2 w-full rounded mt-1"
           />
-          {errors.items?.[index]?.name && (
-            <p className="text-red-500 text-sm">{errors.items[index].name.message}</p>
-          )}
+          <span>{errors.items?.[index]?.name && 
+           errors.items[index].name.message}
+          </span>
 
           {/* Quantity Input */}
           <input
@@ -86,22 +88,26 @@ function DynamicForm() {
             className="border p-2 w-full rounded mt-1"
             type="number"
           />
-          {errors.items?.[index]?.quantity && (
-            <p className="text-red-500 text-sm">{errors.items[index].quantity.message}</p>
-          )}
+          <span>{errors.items?.[index]?.quantity && 
+           errors.items[index].quantity.message}
+          </span>
 
           {/* Priority Select */}
           <select
             {...register(`items.${index}.priority`)}
             className="border p-2 w-full rounded mt-1"
+            onChange={(e) => {
+              setValue(`items.${index}.priority`, e.target.value); // Update the priority value
+              trigger(`items.${index}.quantity`, {shouldFocus: false}); // Revalidate quantity when priority changes
+            }}
           >
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
             <option value="High">High</option>
           </select>
-          {errors.items?.[index]?.priority && (
-            <p className="text-red-500 text-sm">{errors.items[index].priority.message}</p>
-          )}
+          <span>{errors.items?.[index]?.priority && 
+            errors.items[index].priority.message}
+          </span>
 
           {/* Remove Button */}
           <button
@@ -118,7 +124,7 @@ function DynamicForm() {
       {/* Add New Item Button */}
       <button
         type="button"
-        onClick={() => append({ name: "", quantity: "" })}
+        onClick={() => append({ name: "", quantity: "", priority: "low"})}
         className="bg-blue-500 text-white p-2 rounded mb-2 w-full"
       >
         Add Input
