@@ -1,18 +1,11 @@
 import React from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { Name } from "./formField/nested1";
 
 function DynamicForm() {
-  const {
-    register,
-    control,
-    handleSubmit,
-    watch,
-    trigger,
-    setValue, 
-    formState: { errors },
-  } = useForm({
+  const methods = useForm({
     defaultValues: {
       items: [],
       extraField: "", // Adding extra field
@@ -51,7 +44,10 @@ function DynamicForm() {
               }).test("low-quantity-previous", "Quantity is lower than previous row", function (value) {
                 const index = this.path.match(/\d+/)[0]; // Extract index from path
                 const items = watch("items") || []; // Now watch is initialized
-                if (items[index]?.quantity < items[index - 1]?.quantity) {
+
+       
+                
+                if (parseInt(items[index]?.quantity) < parseInt(items[index - 1]?.quantity)) {
                   return false;
                 }
                 return true;
@@ -62,6 +58,16 @@ function DynamicForm() {
     ),
   });
 
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    trigger,
+    setValue, 
+    formState: { errors },
+  } = methods;
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "items",
@@ -70,6 +76,8 @@ function DynamicForm() {
   const onSubmit = (data) => console.log("Form Data:", data);
 
   return (
+    <FormProvider {...methods}>
+
     <form onSubmit={handleSubmit(onSubmit)} className="p-4 border rounded w-96">
       <h2 className="text-lg font-bold mb-2">Dynamic Form</h2>
       <div className="mb-4">
@@ -87,25 +95,10 @@ function DynamicForm() {
           <label className="block font-semibold">Item {index + 1}</label>
 
           {/* Name Input */}
-          <input
-            {...register(`items.${index}.name`)}
-            placeholder="Item name"
-            className="border p-2 w-full rounded mt-1"
-          />
-          <span>{errors.items?.[index]?.name && 
-           errors.items[index].name.message}
-          </span>
+          <Name index={index} />
 
           {/* Quantity Input */}
-          <input
-            {...register(`items.${index}.quantity`)}
-            placeholder="Quantity"
-            className="border p-2 w-full rounded mt-1"
-            type="number"
-          />
-          <span>{errors.items?.[index]?.quantity && 
-           errors.items[index].quantity.message}
-          </span>
+         
 
           {/* Priority Select */}
           <select
@@ -153,6 +146,7 @@ function DynamicForm() {
       {/* Watch Values (For Debugging) */}
       <pre className="mt-4 bg-gray-100 p-2">{JSON.stringify(watch(), null, 2)}</pre>
     </form>
+    </FormProvider>
   );
 }
 
