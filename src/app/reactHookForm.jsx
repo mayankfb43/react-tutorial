@@ -15,9 +15,15 @@ function DynamicForm() {
   } = useForm({
     defaultValues: {
       items: [],
+      extraField: "", // Adding extra field
+
     },
     resolver: yupResolver(
       yup.object().shape({
+        extraField: yup
+      .string()
+      .required("This field is required")
+      .max(20, "Maximum length is 20 characters"), // Added max length validation
         items: yup.array().of(
           yup.object().shape({
             name: yup
@@ -66,6 +72,15 @@ function DynamicForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="p-4 border rounded w-96">
       <h2 className="text-lg font-bold mb-2">Dynamic Form</h2>
+      <div className="mb-4">
+        <label className="block font-semibold">Extra Field</label>
+        <input
+          {...register("extraField")}
+          placeholder="Enter extra data"
+          className="border p-2 w-full rounded mt-1"
+        />
+        <span className="text-red-500">{errors.extraField?.message}</span>
+      </div>
 
       {fields.map((field, index) => (
         <div key={field.id} className="mb-4 p-2 border rounded">
@@ -136,7 +151,7 @@ function DynamicForm() {
       </button>
 
       {/* Watch Values (For Debugging) */}
-      <pre className="mt-4 bg-gray-100 p-2">{JSON.stringify(watch("items"), null, 2)}</pre>
+      <pre className="mt-4 bg-gray-100 p-2">{JSON.stringify(watch(), null, 2)}</pre>
     </form>
   );
 }
