@@ -40,6 +40,13 @@ function DynamicForm() {
                   }
                 }
                 return true;
+              }).test("low-quantity-previous", "Quantity is lower than previous row", function (value) {
+                const index = this.path.match(/\d+/)[0]; // Extract index from path
+                const items = watch("items") || []; // Now watch is initialized
+                if (items[index]?.quantity < items[index - 1]?.quantity) {
+                  return false;
+                }
+                return true;
               }),
           })
         ),
