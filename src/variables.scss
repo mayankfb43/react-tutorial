@@ -1,0 +1,11 @@
+$color: orange;
+
+@mixin backGround {
+    background-color: green;
+}
+
+@mixin defaultHeight {
+    height: auto;
+    padding-bottom: 4rem;
+    padding-top: 4rem;
+}

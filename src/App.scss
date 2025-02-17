@@ -1,0 +1,37 @@
+
+
+@import './variables.scss';
+
+.header {
+  height: auto;
+}
+
+.sideMenu {
+  @include defaultHeight;
+  background-color: white;
+  flex-direction: column;
+}
+
+.menuItem {
+  @include backGround;
+  height: 3rem;
+}
+
+.column-3 {
+  @include defaultHeight;
+  @include backGround;
+}
+
+.menu-item__container {
+  margin-top: 0.5rem;
+}
+
+.footer {
+  background-color: $color;
+  height: 15rem;
+}
+
+.content {
+  @include defaultHeight;
+  background-color: gray;
+}

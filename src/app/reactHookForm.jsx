@@ -3,6 +3,10 @@ import { useForm, useFieldArray, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Name } from "./formField/nested1";
+import {Quantity} from "../../src/app/formField/nested2"
+import { Select } from "./formField/select";
+import { v4 as uuidv4 } from "uuid"; // Import UUID generator
+
 
 function DynamicForm() {
   const methods = useForm({
@@ -78,7 +82,7 @@ function DynamicForm() {
   return (
     <FormProvider {...methods}>
 
-    <form onSubmit={handleSubmit(onSubmit)} className="p-4 border rounded w-96">
+    <form  onSubmit={handleSubmit(onSubmit)} className="p-3 border rounded row">
       <h2 className="text-lg font-bold mb-2">Dynamic Form</h2>
       <div className="mb-4">
         <label className="block font-semibold">Extra Field</label>
@@ -92,56 +96,37 @@ function DynamicForm() {
 
       {fields.map((field, index) => (
         <div key={field.id} className="mb-4 p-2 border rounded">
-          <label className="block font-semibold">Item {index + 1}</label>
 
-          {/* Name Input */}
-          <Name index={index} />
+          <div className="col-12">
+            <div className="row">
+              <div className="col-4">
+              <Name index={index} />
 
-          {/* Quantity Input */}
-         
+              </div>
+              <div className="col-4">
+                <Quantity index={index} />
+              </div>
+              <div className="col-4">
+                <Select index={index} />
+              </div>
+            </div>
+          </div>
+          
+          <button disabled={fields.length === 1} onClick={() => remove(index)} type="button" class="btn btn-danger">Remove</button>
 
-          {/* Priority Select */}
-          <select
-            {...register(`items.${index}.priority`)}
-            className="border p-2 w-full rounded mt-1"
-            onChange={(e) => {
-              setValue(`items.${index}.priority`, e.target.value); // Update the priority value
-              trigger(`items.${index}.quantity`, {shouldFocus: false}); // Revalidate quantity when priority changes
-            }}
-          >
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
-          <span>{errors.items?.[index]?.priority && 
-            errors.items[index].priority.message}
-          </span>
-
-          {/* Remove Button */}
-          <button
-            type="button"
-            onClick={() => remove(index)}
-            className="bg-red-500 text-white px-2 py-1 rounded mt-2 w-full"
-            disabled={fields.length === 1}
-          >
-            Remove
-          </button>
+       
         </div>
       ))}
 
       {/* Add New Item Button */}
-      <button
-        type="button"
-        onClick={() => append({ name: "", quantity: "", priority: "low"})}
-        className="bg-blue-500 text-white p-2 rounded mb-2 w-full"
-      >
-        Add Input
-      </button>
+      <button  onClick={() => append({ id: uuidv4(), name: "", quantity: "", priority: "low"})}  type="submit" class="btn btn-success">Add Input</button>
+     
+   
 
       {/* Submit Button */}
-      <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
-        Submit
-      </button>
+      <button  type="submit" class="btn btn-success">Submit</button>
+     
+
 
       {/* Watch Values (For Debugging) */}
       <pre className="mt-4 bg-gray-100 p-2">{JSON.stringify(watch(), null, 2)}</pre>
@@ -150,4 +135,4 @@ function DynamicForm() {
   );
 }
 
-export default DynamicForm;
+export  {DynamicForm};
